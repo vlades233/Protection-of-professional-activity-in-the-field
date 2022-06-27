@@ -1,41 +1,60 @@
 import hashlib
 
+global result
 
-def password_hack(hashed_string, word_list, output_file_name):
+
+def crack_md5(wordlist, pass_hash):
+    flag = 0
+    attempts = 0
+
     try:
-        words = open(word_list, "r")
-        output_file = open(output_file_name, 'w')
-    except:
-        print("\n File Not Found")
+        pass_file = open(wordlist, 'r')
+    except Exception as e:
+        print("No File Found!")
         quit()
 
-    counter = 1
-    for word in words:
-        calculated_hash = hashlib.sha256(word.strip().encode('utf-8')).hexdigest()
+    print("Attempting to Crack Password Hash...")
+    print("Please wait for a while!")
 
-        print('Trying Password %d: %s ' % (counter, word.strip()))
-        output_file.write('Trying word %d: %s ' % (counter, word.strip()))
-        output_file.write('\nPossible word hash: %s ' % calculated_hash)
-        output_file.write('\nActual hash: %s ' % hashed_string)
-        output_file.write('\n-------------------------------\n')
+    for word in pass_file:
+        enc_wrd = word.encode('utf-8')
+        digest = hashlib.md5(enc_wrd.strip()).hexdigest()
 
-        counter += 1
+        attempts += 1
 
-        if calculated_hash == hashed_string:
-            print('\nPassword found: %s ' % word)
+        if digest == pass_hash:
+            global result
+            result = word
+            print(f"Password Found : {word}")
+            print(f"Total Attempts to Crack MD5 Hash: {attempts}")
+            flag = 1
             break
 
+    if flag == 0:
+        print("[-] Sorry! Unable to find correct password :(")
+        print(f"Total Attempts to Crack MD5 Hash: {attempts}\n")
+
+
+def save_result(pass_hash, result, file_name):
+    if result == "":
+        failed_result = f"MD5 Hash : {pass_hash}\nResult : Password Not Found in Wordlist"
+        with open(file_name, 'w') as f:
+            f.write(failed_result)
+
     else:
-        print('\nPassword Not Found, try another wordlist or hash')
-
-
-def main():
-    hashed_string ="0c3f20fc51e14a381ebb6241abe16a0d6c188bc9e320abaddf5813baceb6b251"
-    word_list = "files/all_passphrase.txt"
-    output_file_name = "Veselovskyi_sh256.txt"
-
-    password_hack(hashed_string, word_list, output_file_name)
+        cracked_result = f"MD5 Hash : {pass_hash}\nCracked Password : " + result
+        with open(file_name, 'w') as f:
+            f.write(cracked_result)
 
 
 if __name__ == '__main__':
-    main()
+    pass_hash = "c9667bf265e80a74de78fc20b55274d7"
+    word_list = "files/all_passphrase.txt"
+    output_file_name = "Veselovskyi_md5.txt"
+    result = ""
+
+    words = open(word_list, "r")
+    output_file = open(output_file_name, 'w')
+
+    crack_md5(word_list, pass_hash)
+    save_result(pass_hash, result, output_file_name)
