@@ -32,7 +32,7 @@ def password_hack(hashed_string, word_list, output_file_name):
 def main():
     hashed_string ="0c3f20fc51e14a381ebb6241abe16a0d6c188bc9e320abaddf5813baceb6b251"
     word_list = "files/all_passphrase.txt"
-    output_file_name = "Veselovskyi_sh256"
+    output_file_name = "Veselovskyi_sh256.txt"
 
     password_hack(hashed_string, word_list, output_file_name)
 
